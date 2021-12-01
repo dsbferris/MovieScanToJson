@@ -9,13 +9,13 @@ namespace MovieScanToJson
         public static async void WriteToFileAsync<T>(T data, string filepath)
         {
             using FileStream fs = File.Create(filepath);
-            await JsonSerializer.SerializeAsync(fs, data);
+            await JsonSerializer.SerializeAsync(fs, data, new JsonSerializerOptions() { WriteIndented=true});
         }
 
         public static async Task<T?> ReadFromFileAsync<T>(string filepath)
         {
             using FileStream fs = File.OpenRead(filepath);
-            return await JsonSerializer.DeserializeAsync<T>(fs);
+            return await JsonSerializer.DeserializeAsync<T>(fs, new JsonSerializerOptions() { WriteIndented=true});
         }
 
         public static async void WriteToStream<T>(T data, Stream stream)
