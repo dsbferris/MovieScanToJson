@@ -22,8 +22,8 @@ namespace MovieScanToJson
 
         private static string GetInfoFileText(string moviefilepath)
         {
-            //TODO ADD EXTENSION
-            string infofilepath = Path.ChangeExtension(moviefilepath, "INFOFILEEXTENSION!");
+            if (moviefilepath.Contains(".001")) moviefilepath = moviefilepath.Replace(".001", string.Empty);
+            string infofilepath = Path.ChangeExtension(moviefilepath, "xml");
             if (!File.Exists(infofilepath)) return string.Empty;
             return File.ReadAllText(infofilepath);
         }
@@ -36,22 +36,27 @@ namespace MovieScanToJson
             movie.Name = file.Name;
             movie.FileSize = file.Length;
             movie.FilePath = filepath;
-            movie = AddInfoFileContentToMovieModel((MovieModel)movie);
+            //movie = AddInfoFileContentToMovieModel((MovieModel)movie);
             return movie;
         }
 
         public static IEnumerable<MovieModel>? GlobMovies(string rootdir)
         {
-            Matcher matcher = new();
-            matcher.AddIncludePatterns(new[] { "*.mp4", "*.mkv", "*.ts", "*.tx", "*.avi" });
-            PatternMatchingResult result = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(rootdir)));
-            if (!result.HasMatches) yield break;
-            else
+            List<string> extensions = new() { "*.mp4", "*.mkv", "*.ts", "*.tx", "*.avi" };
+            List<string> subdir_extensions = new();
+            foreach(var ext in extensions)
             {
-                foreach(var file in result.Files)
-                {
-                    yield return MovieModelFromFile(Path.Combine(rootdir, file.Path));
-                }
+                subdir_extensions.Add("*/*" + ext);
+            }
+            extensions.AddRange(subdir_extensions);
+
+            Matcher matcher = new();
+            matcher.AddIncludePatterns(extensions);
+            var files = matcher.GetResultsInFullPath(rootdir);
+            foreach (var file in files)
+            {
+                Console.WriteLine("Processing " + file);
+                yield return MovieModelFromFile(file);
             }
         }
     }
