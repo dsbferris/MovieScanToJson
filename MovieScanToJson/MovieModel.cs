@@ -8,8 +8,7 @@ namespace MovieScanToJson
 {
     public class MovieModel
     {
-        public bool Favourite { get; set; }
-
+		public bool Favourite { get; set; } = false;
         public string? Name { get; set; }
         public long FileSize { get; set; }
         public string? FilePath { get; set; }
