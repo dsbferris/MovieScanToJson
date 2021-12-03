@@ -8,14 +8,10 @@ namespace MovieScanToJson
 {
     public class MovieModel
     {
-		public bool Favourite { get; set; } = false;
         public string? Name { get; set; }
         public long FileSize { get; set; }
         public string? FilePath { get; set; }
-        public int? RuntimeSeconds { get; set; }
-        public string? Description { get; set; }
-        public int? ReleaseYear { get; set; }
-
+        public AdditionalMovieInfo? Info { get; set; }
 
         public static string GetBytesReadable(long? value)
 		{
@@ -68,8 +64,87 @@ namespace MovieScanToJson
 		}
 	}
 
-	public class MovieList
+	public class AdditionalMovieInfo
     {
-		public List<MovieModel>? Movies { get; set; }
+		/// <summary>
+		/// epgtitle
+		/// </summary>
+		public string? Title { get; set; }
+
+		/// <summary>
+		/// info1
+		/// </summary>
+		public string? Genre { get; set; }
+
+		/// <summary>
+		/// info2
+		/// </summary>
+		public string? Description { get; set; }
+
+		/// <summary>
+		/// parentallockage
+		/// </summary>
+        public int? AgeRating { get; set; }
+
+		/// <summary>
+		/// reclength
+		/// </summary>
+        public int? LengthSeconds { get; set; }
+
+		/// <summary>
+		/// length
+		/// </summary>
+        public int? LengthMinutes { get; set; }
+
+		/*
+			<audiopids selected="1024">
+				<audio pid="1024" name="Deutsch"/>
+				<audio pid="1025" name="Englisch"/>
+				<audio pid="1027" name="Dolby Digital 5.1 (AC3)"/>
+			</audiopids>
+		 */
+		/// <summary>
+		/// audiopids->audio name="..."
+		/// </summary>
+		public string[]? AudioLanguages { get; set; }
+
+		/// <summary>
+		/// seriename
+		/// </summary>
+        public string? SerienName { get; set; }
+
+
+
+		public const string XmlTitle = "epgtitle";
+		public const string XmlGenre = "info1";
+		public const string XmlDescription = "info2";
+		public const string XmlAgeRating = "parentallockage";
+		public const string XmlLengthSeconds = "reclength";
+		public const string XmlLengthMinutes = "length";
+		public const string XmlAudios = "audiopids";
+		public const string XmlAudio = "audio";
+		public const string XmlSerienName = "seriename";
+
+		private static string GetBegin(string attribute)
+        {
+			return "<" + attribute + ">";
+        }
+		private static string GetEnd(string attribute)
+        {
+			return "</" + attribute + ">";
+        }
+		public static string? GetContent(string attribute, string infotext)
+        {
+			if (!string.IsNullOrEmpty(infotext))
+            {
+				if (!string.IsNullOrEmpty(attribute))
+                {
+					//TODO IMPLEMENT
+					throw new NotImplementedException();
+                }
+            }
+			return null;
+        }
     }
+
 }
