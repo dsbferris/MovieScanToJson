@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
+using AMI = MovieScanToJson.AdditionalMovieInfo;
 
 namespace MovieScanToJson
 {
@@ -15,12 +17,73 @@ namespace MovieScanToJson
         {
             if (movie.FilePath == null) return movie;
 
-            _ = GetInfoFileText(movie.FilePath);
-            //TODO IMPLEMENT FILE SCRAPPING!
-            throw new NotImplementedException();
+            var infotext = ReadInfoFileText(movie.FilePath);
+            if (!string.IsNullOrEmpty(infotext))
+            {
+                
+                AMI info = new();
+
+                foreach (var line in infotext.Split('\n', StringSplitOptions.TrimEntries))
+                {
+                    if (line.Contains(AMI.XmlTitle))
+                    {
+                        //info.Title = AMI.GetLineContent(line);
+                    }
+                    else if (line.Contains(AMI.XmlGenre))
+                    {
+                        //info.Genre = AMI.GetLineContent(line);
+                    }
+                    else if (line.Contains(AMI.XmlDescription))
+                    {
+                        //THIS WILL NOT WORK WITH LINES....
+                        //REDO THIS HOLE THING
+                        //info.Description = AMI.GetLineContent(line);
+                    }
+                    else if (line.Contains(AMI.XmlAgeRating))
+                    {
+                        //var age_string = AMI.GetLineContent(line);
+                        //int age = -1;
+                        //int.TryParse(age_string, out age);
+                        //if (age != -1) info.AgeRating = age;
+                    }
+                    else if (line.Contains(AMI.XmlLengthSeconds))
+                    {
+                        //Set Seconds
+                    }
+                    else if(info.LengthSeconds == null && line.Contains(AMI.XmlLengthMinutes))
+                    {
+                        //Set Minutes
+                    }
+                    else if (line.Contains(AMI.XmlSerienName))
+                    {
+                        //Set Serienname
+                    }
+                    else if (line.Contains(AMI.XmlAudio))
+                    {
+                        //Add Audio
+                    }
+
+                    
+                    /*
+                    epgtitle        - Title
+                    info1           - Genre
+                    info2           - Desc
+                    parentallockage - AgeRating
+                    length          - LengthMinutes
+                    reclength       - LengthSeconds
+                    seriename       - SerienName
+                    audiopids->audio name=".." AudioLanguages[]
+                        */
+
+                    
+                }
+                if (AMI.Equals(info, new AMI())) Console.WriteLine("AMI is blank.");
+                else movie.Info = info;
+            }
+            return movie;
         }
 
-        private static string GetInfoFileText(string moviefilepath)
+        private static string ReadInfoFileText(string moviefilepath)
         {
             if (moviefilepath.Contains(".001")) moviefilepath = moviefilepath.Replace(".001", string.Empty);
             string infofilepath = Path.ChangeExtension(moviefilepath, "xml");
@@ -32,11 +95,12 @@ namespace MovieScanToJson
         {
             FileInfo file = new(filepath);
             MovieModel movie = new();
-            //TODO CHECK FOR INFO FILE AT THE SAME LOCATION!
-            movie.Name = file.Name;
+            string name = file.Name.Replace(".001", string.Empty).Replace(file.Extension, string.Empty);
+
+            movie.Name = name;
             movie.FileSize = file.Length;
             movie.FilePath = filepath;
-            //movie = AddInfoFileContentToMovieModel((MovieModel)movie);
+            movie = AddInfoFileContentToMovieModel((MovieModel)movie);
             return movie;
         }
 

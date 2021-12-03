@@ -32,13 +32,29 @@ list_of_list_of_folders.Add(new () {
 list_of_list_of_folders.Add(new () {
     @"\\192.168.178.39\movies1", @"\\192.168.178.39\movies2", @"\\192.168.178.39\movies3", @"\\192.168.178.39\movies4", @"\\192.168.178.39\movies5"});
 
-var dir = list_of_list_of_folders[0][0];
-var movies_enum = GlobbingHelper.GlobMovies(dir);
-List<MovieModel> movies;
-if (movies_enum != null)
+var sample_dir = list_of_list_of_folders[0][0];
+
+List<MovieModel> movies = new();
+List<Task> tasks = new();
+
+var result = await Task.Run(() => GlobbingHelper.GlobMovies(sample_dir));
+foreach(var folder in list_of_list_of_folders[0])
 {
-    movies = movies_enum.ToList();
-    Console.WriteLine("Found " + movies.Count + " movies");
+    Console.WriteLine("Starting task for " + folder);
+#pragma warning disable CS8604 // Mögliches Nullverweisargument.
+    movies.AddRange(await Task.Run(() => GlobbingHelper.GlobMovies(folder)));
+#pragma warning restore CS8604 // Mögliches Nullverweisargument.
 }
-Console.ReadLine();
-return;
+
+Console.WriteLine("Sorting list");
+#pragma warning disable CS8602 // Dereferenzierung eines möglichen Nullverweises.
+movies.Sort((a, b) => a.Name.CompareTo(b.Name));
+#pragma warning restore CS8602 // Dereferenzierung eines möglichen Nullverweises.
+
+foreach (var movie in movies)
+{
+    Console.WriteLine(movie.Name);
+}
+Console.WriteLine("Found " + movies.Count + " movies.");
+Console.WriteLine("Writing found movies to json file");
+JsonHelper.WriteToFileAsync<List<MovieModel>>(movies);
