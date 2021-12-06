@@ -4,10 +4,10 @@ namespace MovieScanToJson
 {
     public static class JsonHelper
     {
-        private const string jsonfile = "movies.json";
-        private static readonly JsonSerializerOptions options = new() { WriteIndented=true};
+        public const string jsonfile = "movies.json";
+        private static readonly JsonSerializerOptions options = new() { WriteIndented = true };
 
-        public static async void WriteToFileAsync<T>(T data, string filepath = jsonfile)
+        public static async Task WriteToFileAsync<T>(T data, string filepath = jsonfile)
         {
             using FileStream fs = File.Create(filepath);
             await JsonSerializer.SerializeAsync(fs, data, options);
@@ -19,7 +19,7 @@ namespace MovieScanToJson
             return await JsonSerializer.DeserializeAsync<T>(fs, options);
         }
 
-        public static async void WriteToStream<T>(T data, Stream stream)
+        public static async Task WriteToStream<T>(T data, Stream stream)
         {
             await JsonSerializer.SerializeAsync(stream, data, options);
         }
