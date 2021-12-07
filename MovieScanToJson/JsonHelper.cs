@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System;
 
 namespace MovieScanToJson
 {
@@ -51,7 +50,7 @@ namespace MovieScanToJson
             byte[] iv = new byte[aes.IV.Length];
             int numBytesToRead = aes.IV.Length;
             int numBytesAlreadyRead = 0;
-            while(numBytesToRead > 0)
+            while (numBytesToRead > 0)
             {
                 int n = await fs.ReadAsync(iv.AsMemory(numBytesAlreadyRead, numBytesToRead));
                 if (n == 0) break;
