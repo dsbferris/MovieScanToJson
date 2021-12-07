@@ -27,17 +27,6 @@ namespace MovieScanToJson
             Options = FileOptions.Asynchronous
         };
 
-        public static async Task SerializeToFileAsync<T>(T data, string filepath = jsonfile)
-        {
-            using FileStream fs = File.Create(filepath);
-            await JsonSerializer.SerializeAsync(fs, data, jsonOptions);
-        }
-
-        public static async Task<T?> DeserializeFromFileAsync<T>(string filepath = jsonfile)
-        {
-            using FileStream fs = File.OpenRead(filepath);
-            return await JsonSerializer.DeserializeAsync<T>(fs, jsonOptions);
-        }
 
         public static async Task SerializeToEncryptedFile<T>(T data, string filepath = cryptojsonfile)
         {
