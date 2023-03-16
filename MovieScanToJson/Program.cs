@@ -2,8 +2,8 @@
 using System.Diagnostics;
 
 
-string[] hds = { @"\\location1", @"\\location2", @"\\location3", @"\\location4", @"\\location5" };
-// string[] mvs = { @"\\movies1", @"\\movies2", @"\\movies3", @"\\movies4", @"\\movies5" };
+string[] hds = { @"\\d1", @"\\d2", @"\\d3", @"\\d4", @"\\d5" };
+// string[] mvs = { @"\\m1", @"\\m2", @"\\m3", @"\\m4", @"\\m5" };
 
 void checkNas()
 {
